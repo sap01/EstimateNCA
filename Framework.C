@@ -150,6 +150,14 @@ Framework::init(int argc, char** argv)
 				inputC=true;
 				break;
 			}
+
+                        case 'b'://The best lambdas per gene for CV
+                        {
+                                CV = atoi(my_optarg);
+                                inputC=true;
+                                break;
+                        }
+
 			case 'd'://Expression
 			{
 				strcpy(dname,my_optarg);
