@@ -96,18 +96,20 @@ Framework::init(int argc, char** argv)
 	bool inputN=false;
 	bool inputL=false;
 	bool inputC=false;
+	bool inputB=false;
 	bool inputO=false;
 
 	char gname[1025];
 	char rname[1025];
 	char pname[1025];
 	char dname[1025];
+	char bname[1025];
 
 	int optret='-';
 	opterr=1;
 	int oldoptind=optind;
 	int condCnt=1;
-	while(optret=getopt(argc,argv,"r:g:p:o:d:l:c:h")!=-1)
+	while(optret=getopt(argc,argv,"r:g:p:o:d:l:c:b:h")!=-1)
 	{
 		if(optret=='?')
 		{
@@ -150,14 +152,12 @@ Framework::init(int argc, char** argv)
 				inputC=true;
 				break;
 			}
-
-                        case 'b'://The best lambdas per gene for CV
-                        {
-                                CV = atoi(my_optarg);
-                                inputC=true;
-                                break;
-                        }
-
+			case 'b'://The best lambdas per target gene for CV
+			{
+				strcpy(bname,my_optarg);
+				inputB=true;
+				break;
+			}
 			case 'd'://Expression
 			{
 				strcpy(dname,my_optarg);
@@ -234,6 +234,12 @@ Framework::init(int argc, char** argv)
 		cerr << "Ignoring CV" << endl;
 		CV=0;
 	}
+	if (!inputL && inputC && !inputB)
+	{
+		cerr << "Output file was not provided for the best lambdas per gene for CV" << endl;
+		printHelp(argv[0]);
+		return -1;
+	}
 
 	regMngr = new VariableManager;
 	regMngr->readVariables(rname);
@@ -266,6 +272,7 @@ Framework::printHelp(char* name)
 	cerr << "-p\t\tPrior network, [TF][\\t][TG][\\t][Confidence]" << endl;
 	cerr << "-l\t\tLambda penalty, for LASSO, higher means more sparse (default 0)" << endl;
 	cerr << "-c\t\tNumber of cross validation folds (instead of fixed Lambda)" << endl;
+	cerr << "-b\t\tOutput file for best lambdas per target gene if opted for cross validation" << endl;
 	cerr << "-o\t\tOutput directory, it will over write existing files" << endl;
 	return 0;
 }
